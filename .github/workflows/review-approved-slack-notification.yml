@@ -1,0 +1,36 @@
+# Required secrets:
+#  - SLACK_REVIEWS_WEBHOOK_URL: The URL of the webhook that posts the message
+#  - slack_email_<github_username>: The email that each team member uses on Slack
+
+# How to set it up:
+#
+# name: PR approved Slack notification
+# on:
+#   pull_request_review:
+#     types: [submitted]
+# jobs:
+#   approved:
+#     uses: NomicFoundation/github-actions-workflows/.github/workflows/review-approved-slack-notification.yml@main
+#     secrets: inherit
+
+name: PR approved Slack notification
+
+on:
+  workflow_call:
+
+jobs:
+  approved:
+    if: github.event.review.state == 'APPROVED'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify of approval
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {
+              "message": "✅ ${{github.event.review.user.login}} approved your pull request: ${{github.event.pull_request.title}}", 
+              "user": "${{ secrets[format('slack_email_{0}', github.event.pull_request.user.login)] }}",
+              "pr_url": "${{ github.event.pull_request.html_url }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_REVIEWS_WEBHOOK_URL }}
