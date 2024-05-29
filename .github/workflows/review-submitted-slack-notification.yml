@@ -20,6 +20,8 @@ on:
 
 jobs:
   reviewed:
+    # The "Add single comment" button also creates a "commented" review (without body) so we skip it
+    if: ${{ github.event.review.state != 'commented' || github.event.review.body != '' }}
     runs-on: ubuntu-latest
     steps:
       - name: Notify of review
