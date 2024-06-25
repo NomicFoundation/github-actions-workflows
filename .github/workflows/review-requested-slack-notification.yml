@@ -27,7 +27,7 @@ jobs:
         with:
           payload: |
             {
-              "message": "👉 ${{github.event.sender.login}} requested your review in: ${{github.event.pull_request.title}}", 
+              "message": ${{toJSON("👉 ${{github.event.sender.login}} requested your review in: ${{github.event.pull_request.title}}")}}, 
               "user": "${{ secrets[format('slack_email_{0}', github.event.requested_reviewer.login)] }}",
               "pr_url": "${{ github.event.pull_request.html_url }}"
             }
