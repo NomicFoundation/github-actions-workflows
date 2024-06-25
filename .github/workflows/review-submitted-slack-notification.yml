@@ -24,12 +24,20 @@ jobs:
     if: ${{ github.event.review.state != 'commented' || github.event.review.body != '' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Set message
+        id: set_message
+        run: |
+          str=$(cat <<GHEOF
+            ${{format('👈 {0} reviewed your pull request: {1}', github.event.review.user.login, github.event.pull_request.title)}}
+          GHEOF)
+          printf 'message=%s\n' "$(echo $str| jq -R .)" >> $GITHUB_OUTPUT
+
       - name: Notify of review
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
             {
-              "message": "👈 ${{github.event.review.user.login}} reviewed your pull request: ${{github.event.pull_request.title}}", 
+              "message": ${{ steps.set_message.outputs.message }},
               "user": "${{ secrets[format('slack_email_{0}', github.event.pull_request.user.login)] }}",
               "pr_url": "${{ github.event.pull_request.html_url }}"
             }
