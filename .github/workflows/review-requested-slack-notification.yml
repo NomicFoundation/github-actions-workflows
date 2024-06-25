@@ -24,7 +24,8 @@ jobs:
     steps:
       - name: Set message
         id: set_message
-        run: echo "message=$(echo "👉 ${{ github.event.sender.login }} requested your review in: ${{ github.event.pull_request.title }}" | jq -R .)" >> $GITHUB_OUTPUT
+        run: >
+          echo "message=$(echo "👉 ${{ github.event.sender.login }} requested your review in: ${{ github.event.pull_request.title }}" | jq -R .)" >> $GITHUB_OUTPUT
 
       - name: Notify of review request
         uses: slackapi/slack-github-action@v1.26.0
