@@ -27,7 +27,8 @@ jobs:
         run: |
           str=$(cat << 'GHEOF'
             ${{format('👉 {0} requested your review in: {1}', github.event.sender.login, github.event.pull_request.title)}}
-          GHEOF)
+          GHEOF
+          )
           printf 'message=%s\n' "$(echo $str| jq -R .)" >> $GITHUB_OUTPUT
 
       - name: Notify of review request
