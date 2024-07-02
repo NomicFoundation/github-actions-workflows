@@ -27,7 +27,7 @@ jobs:
       - name: Set message
         id: set_message
         run: |
-          str=$(cat <<GHEOF
+          str=$(cat << 'GHEOF'
             ${{format('👈 {0} reviewed your pull request: {1}', github.event.review.user.login, github.event.pull_request.title)}}
           GHEOF)
           printf 'message=%s\n' "$(echo $str| jq -R .)" >> $GITHUB_OUTPUT
