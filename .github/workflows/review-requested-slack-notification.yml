@@ -31,13 +31,19 @@ jobs:
           )
           printf 'message=%s\n' "$(echo $str| jq -R .)" >> $GITHUB_OUTPUT
 
+      - name: Set user email
+        id: set_user_email
+        run: |
+          echo 'email=${{ secrets[format('slack_email_{0}', github.event.requested_reviewer.login)] }}' >> $GITHUB_OUTPUT
+
       - name: Notify of review request
         uses: slackapi/slack-github-action@v1.26.0
+        if: ${{ steps.set_user_email.outputs.email != '' }}
         with:
           payload: |
             {
               "message": ${{ steps.set_message.outputs.message }},
-              "user": "${{ secrets[format('slack_email_{0}', github.event.requested_reviewer.login)] }}",
+              "user": "${{ steps.set_user_email.outputs.email }}",
               "pr_url": "${{ github.event.pull_request.html_url }}"
             }
         env:
